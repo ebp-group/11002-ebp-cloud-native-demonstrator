@@ -1,3 +1,15 @@
 // Import all of Bootstrap’s CSS
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import 'maplibre-gl/dist/maplibre-gl.css';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}

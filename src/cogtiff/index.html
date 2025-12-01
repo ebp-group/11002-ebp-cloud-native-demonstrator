@@ -4,12 +4,67 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cloud-Native Geospatial Demonstrator</title>
-    <script type="module" src="../shared/main.ts"></script>
+    <script type="module" src="../shared/index.ts"></script>
     <script type="module" src="./main.ts"></script>
   </head>
   <body>
-    <div class="d-flex justify-content-center align-items-center h-100 p-5">
-      <div id="map"></div>
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div class="col-6 p-0">
+          <div id="map" class="h-100"></div>
+        </div>
+        <div class="col-6 p-4 h-100 d-flex flex-column">
+          <a href="../">&leftarrow;Back to start</a>
+          <h1 class="display-1">COGTIFF</h1>
+          <div class="alert alert-info">
+            <b>Elevation at mouse click:</b>&nbsp;<span id="clickresult"><i>none</i></span>
+          </div>
+          <div class="overflow-auto">
+            <h2 class="display-6">General</h2>
+            <ul>
+              <li>
+                Datasource: <a href="https://www.swisstopo.admin.ch/de/hoehenmodell-swissaltiregio" target="_blank">swissALTIRegio</a>
+              </li>
+              <li>
+                Additional library needed:
+                <a href="https://www.npmjs.com/package/@geomatico/maplibre-cog-protocol?activeTab=readme" target="_blank"
+                  >@geomatico/maplibre-cog-protocol</a
+                >
+              </li>
+              <li>Datafile is roughly 430MB, see network tab to see the rangerequests in action.</li>
+            </ul>
+            <hr />
+            <h2 class="display-6">Things to note</h2>
+            <p>
+              MapLibre does not support COGTIFF natively. Therefore, we need to use an additional protocol handler to read the data.
+              Additionally, since Maplibre, or rather the protocol handler, does not support CRSs other than
+              <code>EPSG:3857</code>
+              and on-the-fly reprojections is not natively available in the protocol handler, we need to reproject the data beforehand.
+            </p>
+            <p>Reprojecting the data can be done using <a href="https://gdal.org/en/stable/" target="_blank">GDAL</a>.</p>
+            <pre><code class="language-bash"># Reproject from EPSG:2056 to EPSG:3857; note the compression to create a COG; allow BIGTIFF if needed
+gdalwarp -s_srs EPSG:2056 -t_srs EPSG:3857 input.tif output_3857.tif -of COG -co COMPRESS=LZW -co BIGTIFF=YES
+
+# Optionally, normalize values to 0-255 range for direct visualisation without custom visualizer functions
+gdal_translate -ot Byte -of COG -co COMPRESS=LZW -co BIGTIFF=YES  -scale -a_nodata 0 input.tif output.tif</code></pre>
+            <p>
+              Custom color schemes are also possible; however, the library at this point in time did have typing errors and the coloring
+              function was not exposed. As with all dynamic coloring, performance will be lower than pre-styled tiles as the function is
+              applied <i>per pixel</i>, hence, computational complexity of the coloring function directly scales with pixel resolution.
+            </p>
+            <p>
+              Using COGTIFFs works well with maplibre's
+              <a href="https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/" target="_blank">3D Terrain</a> capabilities. If you
+              toggle the terrain using the button on the upper right, the same COGTIFF is used for rendering the 3d elevation and adding
+              hillshade (if you haven't, use <code>CTRL + Click</code> to pitch the map). <b>However,</b> since we normalized the raster for
+              simpler visualisation, the example uses an exaggeration hack to get back to the original values, since maplibre interprets
+              raster values in meters. Furthermore, due to the resolution of the dataset, the terrain does not look very smooth &mdash; it
+              is a mere example of showing the capabilities of using COGTIFFs. Finally, due to the implementation of both the protocol
+              handler, the elevation query still works (even though <i>technically</i> we could use the terrain querying mechanism).
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

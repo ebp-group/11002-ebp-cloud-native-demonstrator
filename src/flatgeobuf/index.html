@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cloud-Native Geospatial Demonstrator</title>
+    <script type="module" src="../shared/index.ts"></script>
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div class="col-6 p-0">
+          <div id="map" class="h-100"></div>
+        </div>
+        <div class="col-6 p-4 h-100 d-flex flex-column">
+          <a href="../">&leftarrow;Back to start</a>
+          <h1 class="display-1">FlatGeoBuf</h1>
+          <div class="alert alert-info">
+            <b>Feature data at mouse click:</b>&nbsp;
+            <pre><code id="clickresult"><i>none</i></code></pre>
+            <button id="clearResults" class="btn btn-primary">Clear</button>
+          </div>
+          <div class="overflow-auto">
+            <h2 class="display-6">General</h2>
+            <ul>
+              <li>
+                Datasource:
+                <a href="https://opendata.swiss/de/dataset/eignung-von-hausdachern-fur-die-nutzung-von-sonnenenergie" target="_blank"
+                  >Eignung von Hausdächern für die Nutzung von Sonnenenergie</a
+                >
+              </li>
+              <li>
+                Based on: <a href="https://flatgeobuf.org/examples/maplibre/large.html" target="_blank">Official FlatGeoBuf example</a>
+              </li>
+              <li>
+                Additional library needed:
+                <a href="https://www.npmjs.com/package/flatgeobuf" target="_blank">flatgeobuf</a>
+              </li>
+              <li>Datafile is roughly 5GB with 10+ million polygons, see network tab to see the rangerequests in action.</li>
+            </ul>
+            <hr />
+            <h2 class="display-6">Things to note</h2>
+            <p>
+              The data is provided as <a href="https://www.geopackage.org/" target="_blank">GPKG</a> in <code>EPSG:2056</code>. It was
+              transformed using FME with a simple Reader&leftrightarrow;Writer transformation with implicit reprojection into
+              <code>EPSG:4326</code>, since our map uses this CRS.
+            </p>
+            <p>
+              The example shows the inherent strength of FlatGeoBuf in that it allows for efficient (geospatial) filtering. The blue
+              rectangle is used as filter window to only select the features that are located within this area. The retrieved features are
+              then rendered by means of a
+              <a href="https://maplibre.org/maplibre-gl-js/docs/examples/add-a-geojson-polygon/" target="_blank">GeoJSON layer</a>.
+              <b>This can have negative effects on performance</b>, as very large GeoJSON datasets take a lot of RAM to visualize and
+              render. Hence, this approach is best used for filtering data on the fly and visualizing subsets.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

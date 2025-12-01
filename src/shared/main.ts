@@ -1,3 +1,3 @@
-import './style.scss'
+import './style.scss';
 
-export { createMap } from './map';
+export {createMap} from './map';

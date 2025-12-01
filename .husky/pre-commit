@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+echo "🚀 Running linter!"
+npx lint-staged
+echo ""

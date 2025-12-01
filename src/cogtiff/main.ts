@@ -1,4 +1,4 @@
-import {createMap} from "../shared/map.ts";
+import {createMap} from '../shared/map.ts';
 import './style.scss';
 import maplibregl from 'maplibre-gl';
 import {cogProtocol, locationValues} from '@geomatico/maplibre-cog-protocol';
@@ -13,7 +13,7 @@ import {cogProtocol, locationValues} from '@geomatico/maplibre-cog-protocol';
  * gdal_translate -ot Byte -scale swissaltiregio_2056_5728_transformed_cog.tif swissaltiregio_2056_5728_transformed_cog_norm.tif -of COG -co COMPRESS=LZW -co BIGTIFF=YES -a_nodata 0
  */
 
-const COGTIFF_URL = '/data/swissaltiregio_2056_5728_transformed_cog_norm.tif'
+const COGTIFF_URL = '/data/swissaltiregio_2056_5728_transformed_cog_norm.tif';
 const RASTER_MIN_VALUE = 1.114; // obtained from gdalinfo before normalization
 const RASTER_MAX_VALUE = 4799.446; // obtained from gdalinfo before normalization
 
@@ -21,31 +21,28 @@ maplibregl.addProtocol('cog', cogProtocol);
 const map = createMap('map');
 
 map.on('load', () => {
-    map.addSource('cogSource', {
-        type: 'raster',
-        url: `cog://${COGTIFF_URL}`,
-        tileSize: 128,
+  map.addSource('cogSource', {
+    type: 'raster',
+    url: `cog://${COGTIFF_URL}`,
+    tileSize: 128,
+  });
 
-    });
-
-    map.addLayer({
-        id: 'cogLayer',
-        source: 'cogSource',
-        type: 'raster',
-        paint: {
-            'raster-opacity': 0.7,
-        }
-    });
+  map.addLayer({
+    id: 'cogLayer',
+    source: 'cogSource',
+    type: 'raster',
+    paint: {
+      'raster-opacity': 0.7,
+    },
+  });
 });
 
 map.on('click', ({lngLat}) => {
-    locationValues(
-        COGTIFF_URL,
-        {latitude: lngLat.lat, longitude: lngLat.lng},
-        map.getZoom()
-    ).then(a => console.log(getDenormalizedElevationValue(a[0])));
+  locationValues(COGTIFF_URL, {latitude: lngLat.lat, longitude: lngLat.lng}, map.getZoom()).then((a) =>
+    console.log(getDenormalizedElevationValue(a[0])),
+  );
 });
 
 const getDenormalizedElevationValue = (value: number) => {
-    return value / 255 * (RASTER_MAX_VALUE - RASTER_MIN_VALUE) + RASTER_MIN_VALUE;
-}
+  return (value / 255) * (RASTER_MAX_VALUE - RASTER_MIN_VALUE) + RASTER_MIN_VALUE;
+};

@@ -14,7 +14,9 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
+    "@geomatico/maplibre-cog-protocol": "0.3.1",
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.8"
+    "bootstrap": "^5.3.8",
+    "maplibre-gl": "^5.13.0"
   }
 }

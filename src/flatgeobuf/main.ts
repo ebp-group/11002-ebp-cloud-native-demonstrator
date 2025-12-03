@@ -1,13 +1,9 @@
-import {createMap, setupUI} from '../shared';
+import {createMap, setHighlightedResult, setupUI} from '../shared';
 import {geojson} from 'flatgeobuf';
 import type {ExpressionSpecification, GeoJSONSource} from 'maplibre-gl';
-import hljs from 'highlight.js';
 import type {FeatureCollection} from 'geojson';
 
 setupUI();
-document
-  .getElementById('clearResults')!
-  .addEventListener('click', () => (document.getElementById('clickresult')!.innerHTML = '<i>none</i>'));
 
 const FGB_URL = '/data/solkat.fgb';
 const ROOF_SOURCE_ID = 'roofsSource';
@@ -118,8 +114,7 @@ map.on('load', async () => {
 
   // handle interactions
   map.on('click', ROOFS_FILL_LAYER_ID, (e) => {
-    const {value} = hljs.highlight(JSON.stringify(e.features?.[0]?.properties, null, 2), {language: 'json'});
-    document.getElementById('clickresult')!.innerHTML = value;
+    setHighlightedResult(e.features?.[0]?.properties);
   });
 
   let hoveredStateId: string | number | undefined;

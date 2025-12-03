@@ -1,7 +1,6 @@
-import {createMap, setupUI} from '../shared';
+import {createMap, setHighlightedResult, setupUI} from '../shared';
 import * as pmtiles from 'pmtiles';
-import maplibregl from 'maplibre-gl';
-import hljs from 'highlight.js';
+import maplibregl, {type MapGeoJSONFeature} from 'maplibre-gl';
 
 setupUI();
 
@@ -9,6 +8,7 @@ const PMTILES_URL = '/data/divisions.pmtiles';
 const PMTILES_SOURCE_ID = 'pmtilesSource';
 const COUNTRY_LAYER_ID = 'countryLayer';
 const REGION_LAYER_ID = 'regionLayer';
+const AVAILABLE_LAYERS = [COUNTRY_LAYER_ID, REGION_LAYER_ID];
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -68,8 +68,66 @@ map.on('load', () => {
   });
 
   // click handlers
-  map.on('click', COUNTRY_LAYER_ID, (e) => {
-    const {value} = hljs.highlight(JSON.stringify(e.features?.[0]?.properties, null, 2), {language: 'json'});
-    document.getElementById('clickresult')!.innerHTML = value;
+  map.on('click', AVAILABLE_LAYERS, (e) => {
+    const result: {[key: string]: object[]} = {};
+    e.features?.forEach((feature) => {
+      const data = parseNestedJSON(feature.properties);
+      if (result[feature.layer.id]) {
+        result[feature.layer.id]!.push(data);
+      } else {
+        result[feature.layer.id] = [data];
+      }
+    });
+
+    setHighlightedResult(result);
+  });
+
+  // First, we subscribe to 'sourcedata' events to get notified when new data is loaded for counting features...
+  const sourceDataSub = map.on('sourcedata', () => {
+    const features = map.queryRenderedFeatures({layers: AVAILABLE_LAYERS});
+    updateLayerStats(features);
+  });
+
+  // ... and unsubscribe as soon as we move, because then the user is in control
+  map.on('move', () => {
+    sourceDataSub.unsubscribe();
+    const features = map.queryRenderedFeatures({layers: AVAILABLE_LAYERS});
+    updateLayerStats(features);
   });
 });
+
+const updateLayerStats = (features: MapGeoJSONFeature[]) => {
+  const result = features.reduce(
+    (acc, feature) => {
+      if (acc[feature.layer.id] !== undefined) {
+        acc[feature.layer.id]++;
+      }
+      return acc;
+    },
+    Object.fromEntries(AVAILABLE_LAYERS.map((id) => [id, 0])),
+  );
+  document.getElementById('layerCount')!.innerText = Object.entries(result)
+    .map((r) => `${r[0]}: ${r[1]}`)
+    .join(', ');
+};
+
+/**
+ * Parses nested JSON strings in an object's values; unfortunately, PMTiles properties are sometimes stringified
+ * @param obj
+ */
+const parseNestedJSON = (obj: {[key: string]: unknown}) => {
+  const parsedObj: {[key: string]: unknown} = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      try {
+        parsedObj[key] = JSON.parse(value);
+      } catch {
+        parsedObj[key] = value;
+      }
+    } else if (typeof value === 'object' && value !== null) {
+      parsedObj[key] = value;
+    }
+  }
+  return parsedObj;
+};

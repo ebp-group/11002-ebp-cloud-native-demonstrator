@@ -1,4 +1,4 @@
-import {createMap, setupUI} from '../shared';
+import {createMap, setHighlightedResult, setupUI} from '../shared';
 import maplibregl, {type AddLayerObject} from 'maplibre-gl';
 import {cogProtocol, locationValues} from '@geomatico/maplibre-cog-protocol';
 
@@ -69,7 +69,7 @@ map.on('load', () => {
 
 map.on('click', ({lngLat}) => {
   locationValues(COGTIFF_URL, {latitude: lngLat.lat, longitude: lngLat.lng}, map.getZoom()).then((a) => {
-    document.getElementById('clickresult')!.innerText = `${getDenormalizedElevationValue(a[0]).toFixed(2)} masl`;
+    setHighlightedResult(`${getDenormalizedElevationValue(a[0]).toFixed(2)} masl`);
   });
 });
 

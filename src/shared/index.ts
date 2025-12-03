@@ -5,7 +5,7 @@ export {createMap} from './map';
 
 export const setupUI = () => {
   hljs.highlightAll();
-  document.getElementById('clearResults')!.addEventListener('click', () => (document.getElementById('clickresult')!.innerHTML = 'none'));
+  document.getElementById('clearResults')?.addEventListener('click', () => (document.getElementById('clickresult')!.innerHTML = 'none'));
 };
 
 export const setHighlightedResult = (content: unknown) => {

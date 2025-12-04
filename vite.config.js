@@ -1,12 +1,10 @@
 import {resolve} from 'path';
 import {defineConfig} from 'vite';
-import {fileURLToPath} from 'url';
 import wasm from 'vite-plugin-wasm';
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
   root: './',
+  base: '/11002-ebp-cloud-native-demonstrator/',
   plugins: [wasm()],
   build: {
     rollupOptions: {

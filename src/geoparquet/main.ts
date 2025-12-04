@@ -75,7 +75,11 @@ const queryDuckDb = async (id: string) => {
   };
   const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
 
-  const worker = new Worker(bundle.mainWorker); // todo: handle gracefully :)
+  if (!bundle.mainWorker) {
+    throw new Error('No worker found for the selected bundle');
+  }
+
+  const worker = new Worker(bundle.mainWorker);
   const logger = new duckdb.ConsoleLogger();
   const db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);

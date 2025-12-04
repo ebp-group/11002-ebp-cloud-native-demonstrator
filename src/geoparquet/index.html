@@ -14,7 +14,7 @@
           <div id="map" class="h-100"></div>
         </div>
         <div class="col-6 p-4 h-100 d-flex flex-column">
-          <a href="../">&leftarrow;Back to start</a>
+          <a href="../../">&leftarrow;Back to start</a>
           <h1 class="display-1">(Geo)Parquet</h1>
           <div class="alert alert-info">
             <select id="rendercountry" class="form-select">
@@ -40,6 +40,9 @@
             </ul>
             <hr />
             <h2 class="display-6">Things to note</h2>
+            <div class="alert alert-warning">
+              <b>Important:</b> The current versions of <code>duckdb/duckdb-wasm</code> (starting at one of the
+            </div>
             <p>
               <li>currently bugged</li>
               <li>Geo integration fetches whole file, so just bboxes</li>
@@ -52,11 +55,12 @@
                 <code>
                   <IfModule mod_headers.c>
                     Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin, X-Requested-With,
-                    Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified, Content-Range" # Cache-Control for
-                    static content (adjust as needed)
+                    Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified, Content-Range" Header set
+                    Access-Control-Expose-Headers "Content-Range, Content-Length, ETag, Last-Modified" Header set
+                    Access-Control-Allow-Methods "GET, OPTIONS, HEAD" # Cache-Control for static content (adjust as needed)
                     <!--<FilesMatch "\.(tif|parquet|pmtiles|fgb)$">
-                          Header set Cache-Control "public, max-age=604800"
-                          </FilesMatch>-->
+                        Header set Cache-Control "public, max-age=3600"
+                        </FilesMatch>-->
 
                     # Keep-Alive settings (timeout & max) Header set Connection "keep-alive" Header set Keep-Alive "timeout=5, max=100"
                   </IfModule>

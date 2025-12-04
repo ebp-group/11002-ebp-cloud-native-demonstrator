@@ -26,7 +26,7 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "@duckdb/duckdb-wasm": "1.29.1-dev132.0",
+    "@duckdb/duckdb-wasm": "1.29.1-dev260.0",
     "@geomatico/maplibre-cog-protocol": "0.3.1",
     "@popperjs/core": "^2.11.8",
     "@types/geojson": "^7946.0.16",

@@ -20,8 +20,8 @@ const DATA_SOURCES: DataSourceConfig = {
     production: 'https://digital.ebp.ch/cloud-native-demonstrator/solkat.fgb',
   },
   geoparquet: {
-    development: 'http://127.0.0.1:8080/solkat.fgb', // see docs
-    production: 'https://digital.ebp.ch/cloud-native-demonstrator/solkat.fgb',
+    development: 'http://127.0.0.1:8080/divisions_2025-11-19.parquet', // see docs
+    production: 'https://digital.ebp.ch/cloud-native-demonstrator/divisions_2025-11-19.parquet',
   },
 };
 

@@ -21,7 +21,8 @@ document.getElementById('rendercountry')!.addEventListener('input', async (e) =>
   });
 });
 
-const extractBoundbingBoxAsLineString = (row) => {
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+const extractBoundbingBoxAsLineString = (row: any) => {
   const bbox = row.bbox.toJSON();
   const coordinates: number[][] = [
     [bbox.xmin, bbox.ymin],

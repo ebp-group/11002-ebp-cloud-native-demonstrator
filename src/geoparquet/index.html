@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cloud-Native Geospatial Demonstrator</title>
-    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/geoparquet-tvadRmBH.js"></script>
+    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/geoparquet-VT62OcAF.js"></script>
     <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-AK0TvtvL.js">
     <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-B7ka6WSd.js">
     <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-BCd0ybmK.css">
@@ -55,35 +55,30 @@
               directly via http:
             </p>
             <pre><code class="language-sql">SELECT id, country, names, bbox, region, subtype, class, type
-  FROM read_parquet('${PARQUET_LOCATION}')
-  WHERE id = ?</code></pre>
+  FROM read_parquet('http://example.com/data.parquet')
+  WHERE id = 'example-id'</code></pre>
             <p>
               We currently do not use the <i>Geo</i>Parquet capabilities, as fetching the geometry fields triggers almost a full file
               download, possibly related to how the file was generated and/or the binary geometries are stored. It should merely showcase
               how DuckDB can be leveraged to query parquet files; also not that DuckDB WASM is not a fully DuckDB compliant version as of
               right now (see <a href="https://duckdb.org/docs/stable/clients/wasm/overview#limitations" target="_blank">limitiations</a>).
             </p>
-
-            <li>Geo integration fetches whole file, so just bboxes</li>
-            <li>Range requests are finicky, potentially optimizable via files</li>
-            <li>Experimental</li>
-            <li>Code is ugly; complicated to use with WASM Table etc</li>
-            <li>
-              Locally -> use http-server with npx http-server -o ./ -g --cors=Accept-Ranges,Content-Length,ETag,Last-Modified,Content-Range
-              <code>
-                <IfModule mod_headers.c>
-                  Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin, X-Requested-With,
-                  Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified, Content-Range" Header set
-                  Access-Control-Expose-Headers "Content-Range, Content-Length, ETag, Last-Modified" Header set Access-Control-Allow-Methods
-                  "GET, OPTIONS, HEAD" # Cache-Control for static content (adjust as needed)
-                  <!--<FilesMatch "\.(tif|parquet|pmtiles|fgb)$">
-                                Header set Cache-Control "public, max-age=3600"
-                                </FilesMatch>-->
-
-                  # Keep-Alive settings (timeout & max) Header set Connection "keep-alive" Header set Keep-Alive "timeout=5, max=100"
-                </IfModule>
-              </code>
-            </li>
+            <p>
+              The DuckDB integration is quite picky when it comes to server configurations &mdash; the following <code>.htaccess</code> can
+              be used on Apache(-like) servers, especially in CORS settings.
+            </p>
+            <pre><code>&lt;IfModule mod_headers.c&gt;
+    Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin,X-Requested-With,Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified,Content-Range" Header set
+    Access-Control-Expose-Headers "Content-Range, Content-Length, ETag, Last-Modified"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS, HEAD"
+    &lt;FilesMatch "\.(tif|parquet|pmtiles|fgb)$"&gt;
+      Header set Cache-Control "public, max-age=3600"
+  &lt;/FilesMatch&gt;
+    Header set Connection "keep-alive"
+    Header set  Keep-Alive "timeout=5, max=100"
+&lt;/IfModule&gt;</code></pre>
+            <p>For local setup, you can use <a href="https://www.npmjs.com/package/http-server" target="_blank">http-server</a>:</p>
+            <pre><code class="language-bash">npx http-server -o ./ -g --cors=Accept-Ranges,Content-Length,ETag,Last-Modified,Content-Range</code></pre>
           </div>
         </div>
       </div>

@@ -4,24 +4,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cloud-Native Geospatial Demonstrator</title>
-    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/flatgeobuf-CJnlkK5V.js"></script>
-    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-AK0TvtvL.js">
-    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-B7ka6WSd.js">
-    <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-BCd0ybmK.css">
+    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/flatgeobuf-EQ_s9aHv.js"></script>
+    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-BZQIEhfr.js">
+    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-2xGwnY61.js">
+    <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-CwNzltLx.css">
   </head>
   <body>
     <div class="container-fluid h-100">
-      <div class="row h-100">
-        <div class="col-6 p-0">
-          <div id="map" class="h-100"></div>
+      <div class="row flex-column flex-md-row h-100">
+        <div id="map-container" class="col-12 col-md-6 p-0">
+          <div id="map"></div>
         </div>
-        <div class="col-6 p-4 h-100 d-flex flex-column">
-          <a href="../../">&leftarrow;Back to start</a>
+        <div id="text-container" class="col-12 col-md-6 p-4 d-flex flex-column">
+          <a href="/11002-ebp-cloud-native-demonstrator/">&leftarrow;Back to start</a>
           <h1 class="display-1">FlatGeoBuf</h1>
           <div class="alert alert-info">
             <b>Feature data at mouse click:</b>&nbsp;
             <pre><code id="clickresult">none</code></pre>
-            <p><button id="clearResults" class="btn btn-primary">Clear</button></p>
+            <p>
+              <button id="clearResults" class="btn btn-primary">Clear</button>
+            </p>
             <p></p>
           </div>
           <div class="overflow-auto">

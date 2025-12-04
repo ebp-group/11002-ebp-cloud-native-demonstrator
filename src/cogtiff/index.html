@@ -4,42 +4,47 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cloud-Native Geospatial Demonstrator</title>
-    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/cogtiff-DxcJoayd.js"></script>
-    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-AK0TvtvL.js">
-    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-B7ka6WSd.js">
-    <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-BCd0ybmK.css">
+    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/cogtiff-DfLmW9_1.js"></script>
+    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-BZQIEhfr.js">
+    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-2xGwnY61.js">
+    <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-CwNzltLx.css">
   </head>
   <body>
     <div class="container-fluid h-100">
-      <div class="row h-100">
-        <div class="col-6 p-0">
-          <div id="map" class="h-100"></div>
+      <div class="row flex-column flex-md-row h-100">
+        <div id="map-container" class="col-12 col-md-6 p-0">
+          <div id="map"></div>
         </div>
-        <div class="col-6 p-4 h-100 d-flex flex-column">
-          <a href="../../">&leftarrow;Back to start</a>
+        <div id="text-container" class="col-12 col-md-6 p-4 d-flex flex-column">
+          <a href="/11002-ebp-cloud-native-demonstrator/">&leftarrow;Back to start</a>
           <h1 class="display-1">COGTIFF</h1>
+
           <div class="alert alert-info">
             <div>
               <b>Elevation at mouseclick:</b>
               <pre><code id="clickresult">none</code></pre>
             </div>
-            <p><button id="clearResults" class="btn btn-primary">Clear</button></p>
-            <p></p>
+            <p>
+              <button id="clearResults" class="btn btn-primary">Clear</button>
+            </p>
           </div>
+
           <div class="overflow-auto">
             <h2 class="display-6">General</h2>
             <ul>
               <li>
-                Datasource: <a href="https://www.swisstopo.admin.ch/de/hoehenmodell-swissaltiregio" target="_blank">swissALTIRegio</a>
+                Datasource:
+                <a href="https://www.swisstopo.admin.ch/de/hoehenmodell-swissaltiregio" target="_blank">swissALTIRegio</a>
               </li>
               <li>
                 Additional library needed:
-                <a href="https://www.npmjs.com/package/@geomatico/maplibre-cog-protocol?activeTab=readme" target="_blank"
-                  >@geomatico/maplibre-cog-protocol</a
-                >
+                <a href="https://www.npmjs.com/package/@geomatico/maplibre-cog-protocol?activeTab=readme" target="_blank">
+                  @geomatico/maplibre-cog-protocol
+                </a>
               </li>
               <li>Datafile is roughly 430MB, see network tab to see the rangerequests in action.</li>
             </ul>
+
             <hr />
             <h2 class="display-6">Things to note</h2>
             <p>

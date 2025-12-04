@@ -2,9 +2,14 @@ import {resolve} from 'path';
 import {defineConfig} from 'vite';
 import wasm from 'vite-plugin-wasm';
 
+const GITHUB_PAGES_BASE = '/11002-ebp-cloud-native-demonstrator/';
+
 export default defineConfig({
   root: './',
-  base: '/11002-ebp-cloud-native-demonstrator/',
+  define: {
+    __GITHUB_PAGES_BASE__: GITHUB_PAGES_BASE,
+  },
+  base: GITHUB_PAGES_BASE,
   plugins: [wasm()],
   build: {
     rollupOptions: {

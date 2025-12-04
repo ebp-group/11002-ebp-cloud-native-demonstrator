@@ -5,8 +5,8 @@ import {cogProtocol, locationValues} from '@geomatico/maplibre-cog-protocol';
 setupUI();
 
 const COGTIFF_URL = getDataSource('cogtiff');
-const RASTER_MIN_VALUE = 1.114; // obtained from gdalinfo before normalization
-const RASTER_MAX_VALUE = 4799.446; // obtained from gdalinfo before normalization
+const RASTER_MIN_VALUE = 2.3872721195221; // obtained from gdalinfo before normalization
+const RASTER_MAX_VALUE = 4420.6870117188; // obtained from gdalinfo before normalization
 const EXAGGERATION_FACTOR = 255 / RASTER_MAX_VALUE / 20; // hacky workaround to get proper elevation exaggeration
 
 const COG_SOURCE_ID = 'cogSource';
@@ -76,5 +76,5 @@ map.on('click', ({lngLat}) => {
 });
 
 const getDenormalizedElevationValue = (value: number) => {
-  return (value / 255) * (RASTER_MAX_VALUE - RASTER_MIN_VALUE) + RASTER_MIN_VALUE;
+  return value * ((RASTER_MAX_VALUE - RASTER_MIN_VALUE) / 255) + RASTER_MIN_VALUE;
 };

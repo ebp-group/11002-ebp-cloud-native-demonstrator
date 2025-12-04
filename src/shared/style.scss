@@ -9,11 +9,30 @@ body {
   height: 100%;
 }
 
+#clickresult {
+  max-height: 400px;
+}
+
+@media (max-width: 767.98px) {
+  #map-container {
+    height: 30vh;
+  }
+  #text-container {
+    height: 70vh;
+  }
+}
+
+@media (min-width: 768px) {
+  #map-container,
+  #text-container {
+    height: 100vh;
+  }
+}
+
 #map {
-  width: 100%;
   height: 100%;
 }
 
-#clickresult {
-  max-height: 400px;
+.overflow-auto {
+  flex-grow: 1;
 }

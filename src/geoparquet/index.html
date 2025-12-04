@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cloud-Native Geospatial Demonstrator</title>
+    <script type="module" crossorigin src="/assets/geoparquet-DtIQTVzt.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/index-AK0TvtvL.js">
+    <link rel="modulepreload" crossorigin href="/assets/data-hJsDKSB-.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BCd0ybmK.css">
+  </head>
+  <body>
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div class="col-6 p-0">
+          <div id="map" class="h-100"></div>
+        </div>
+        <div class="col-6 p-4 h-100 d-flex flex-column">
+          <a href="../">&leftarrow;Back to start</a>
+          <h1 class="display-1">(Geo)Parquet</h1>
+          <div class="alert alert-info">
+            <select id="rendercountry" class="form-select">
+              <option disabled selected><b>Render BBOX for</b></option>
+              <option value="508f8d1f-2491-437c-b857-f44ccc0446ad">Switzerland</option>
+              <option value="d95d3f8a-a2f4-4436-b0e4-a3a86d15008e">Germany</option>
+            </select>
+          </div>
+          <div class="overflow-auto">
+            <h2 class="display-6">General</h2>
+            <ul>
+              <li>
+                Datasource:
+                <a href="https://docs.overturemaps.org/guides/divisions/#data-access-and-retrieval" target="_blank"
+                  >Ouverture Maps Foundation (Dataset <i>Divisions, 2025-11-19.0</i></a
+                >
+              </li>
+              <li>
+                Additional library needed:
+                <a href="https://www.npmjs.com/package/@duckdb/duckdb-wasm" target="_blank">duckdb/duckdb-wasm</a>
+              </li>
+              <li>Datafile is roughly 700MB, see network tab to see the rangerequests in action.</li>
+            </ul>
+            <hr />
+            <h2 class="display-6">Things to note</h2>
+            <p>
+              <li>currently bugged</li>
+              <li>Geo integration fetches whole file, so just bboxes</li>
+              <li>Range requests are finicky, potentially optimizable via files</li>
+              <li>Experimental</li>
+              <li>Code is ugly; complicated to use with WASM Table etc</li>
+              <li>
+                Locally -> use http-server with npx http-server -o ./ -g
+                --cors=Accept-Ranges,Content-Length,ETag,Last-Modified,Content-Range
+                <code>
+                  <IfModule mod_headers.c>
+                    Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin, X-Requested-With,
+                    Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified, Content-Range" # Cache-Control for
+                    static content (adjust as needed)
+                    <!--<FilesMatch "\.(tif|parquet|pmtiles|fgb)$">
+                          Header set Cache-Control "public, max-age=604800"
+                          </FilesMatch>-->
+
+                    # Keep-Alive settings (timeout & max) Header set Connection "keep-alive" Header set Keep-Alive "timeout=5, max=100"
+                  </IfModule>
+                </code>
+              </li>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

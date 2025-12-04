@@ -8,44 +8,45 @@ import {type GeoJSONSource} from 'maplibre-gl';
 import type {Feature} from 'geojson';
 
 const PARQUET_LOCATION = getDataSource('geoparquet');
+const DUCKDB_SOURCE_ID = 'duckdbSource';
 
 document.getElementById('rendercountry')!.addEventListener('input', async (e) => {
   const select = e.target as HTMLSelectElement;
   const chosenValue = select.value;
 
   const res = await queryDuckDb(chosenValue);
-
-  console.log(res.get(0)?.toJSON());
   res.toArray().forEach((r) => {
-    console.log(r);
-
-    const bbox = r.bbox!.toJSON();
-    console.log(bbox);
-    const coordinates: number[][] = [
-      [bbox.xmin, bbox.ymin],
-      [bbox.xmin, bbox.ymax],
-      [bbox.xmax, bbox.ymax],
-      [bbox.xmax, bbox.ymin],
-      [bbox.xmin, bbox.ymin],
-    ];
-
-    const linestringGeoJSON: Feature = {
-      type: 'Feature',
-      geometry: {
-        type: 'LineString',
-        coordinates,
-      },
-      properties: {},
-    };
-    (map.getSource('duckdbSource') as GeoJSONSource).setData(linestringGeoJSON);
+    const linestringGeoJSON = extractBoundbingBoxAsLineString(r);
+    (map.getSource(DUCKDB_SOURCE_ID) as GeoJSONSource).setData(linestringGeoJSON);
   });
 });
 
+const extractBoundbingBoxAsLineString = (row) => {
+  const bbox = row.bbox.toJSON();
+  const coordinates: number[][] = [
+    [bbox.xmin, bbox.ymin],
+    [bbox.xmin, bbox.ymax],
+    [bbox.xmax, bbox.ymax],
+    [bbox.xmax, bbox.ymin],
+    [bbox.xmin, bbox.ymin],
+  ];
+
+  const linestringGeoJSON: Feature = {
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates,
+    },
+    properties: {},
+  };
+
+  return linestringGeoJSON;
+};
 setupUI();
 const map = createMap({minZoom: 4, maxZoom: 4, initialZoom: 8});
 
 map.on('load', async () => {
-  map.addSource('duckdbSource', {
+  map.addSource(DUCKDB_SOURCE_ID, {
     type: 'geojson',
     data: {type: 'FeatureCollection', features: []},
   });
@@ -53,7 +54,7 @@ map.on('load', async () => {
   map.addLayer({
     id: 'rectangle',
     type: 'line',
-    source: 'duckdbSource',
+    source: DUCKDB_SOURCE_ID,
     paint: {
       'line-color': '#0000FF',
       'line-opacity': 0.9,

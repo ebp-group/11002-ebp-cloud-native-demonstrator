@@ -21,6 +21,9 @@
               <option disabled selected><b>Render BBOX for</b></option>
               <option value="508f8d1f-2491-437c-b857-f44ccc0446ad">Switzerland</option>
               <option value="d95d3f8a-a2f4-4436-b0e4-a3a86d15008e">Germany</option>
+              <option value="166e386a-2b15-45b0-9b23-fb0260657b7b">France</option>
+              <option value="2a0e60c1-1e67-4a09-84a3-603bd8124c5c">Austria</option>
+              <option value="678c68ad-ae0d-4aeb-aa7c-03c413b5d32c">Italy</option>
             </select>
           </div>
           <div class="overflow-auto">
@@ -41,32 +44,47 @@
             <hr />
             <h2 class="display-6">Things to note</h2>
             <div class="alert alert-warning">
-              <b>Important:</b> The current versions of <code>duckdb/duckdb-wasm</code> (starting at one of the
+              <b>Important:</b>Versions <code>>=2.29.1-dev217.0</code>of <code>duckdb/duckdb-wasm</code> seem to have introduced a bug where
+              range requests are not used. Hence, this demonstrator uses a pinned version (<code>1.29.1-dev167.0</code>).
             </div>
             <p>
-              <li>currently bugged</li>
-              <li>Geo integration fetches whole file, so just bboxes</li>
-              <li>Range requests are finicky, potentially optimizable via files</li>
-              <li>Experimental</li>
-              <li>Code is ugly; complicated to use with WASM Table etc</li>
-              <li>
-                Locally -> use http-server with npx http-server -o ./ -g
-                --cors=Accept-Ranges,Content-Length,ETag,Last-Modified,Content-Range
-                <code>
-                  <IfModule mod_headers.c>
-                    Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin, X-Requested-With,
-                    Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified, Content-Range" Header set
-                    Access-Control-Expose-Headers "Content-Range, Content-Length, ETag, Last-Modified" Header set
-                    Access-Control-Allow-Methods "GET, OPTIONS, HEAD" # Cache-Control for static content (adjust as needed)
-                    <!--<FilesMatch "\.(tif|parquet|pmtiles|fgb)$">
-                        Header set Cache-Control "public, max-age=3600"
-                        </FilesMatch>-->
-
-                    # Keep-Alive settings (timeout & max) Header set Connection "keep-alive" Header set Keep-Alive "timeout=5, max=100"
-                  </IfModule>
-                </code>
-              </li>
+              By selecting a country from the dropdown, its bounding box is fetched from the Parquet file and rendered on the map &mdash;
+              once again, this is all powered by range requests in that only those bytes are fetched to represent the row. Because the query
+              is very selective (only one row) and we narrow it down by ID, DuckDB can use
+              <a href="https://duckdb.org/docs/stable/data/parquet/tips#selecting-a-row_group_size" target="_blank">predicate pushdown</a>
+              to efficiently retrieve the byte range necessary for the full row. The query is a simple SQL query that reads the parquet file
+              directly via http:
             </p>
+            <pre><code class="language-sql">SELECT id, country, names, bbox, region, subtype, class, type
+  FROM read_parquet('http://example.com/data.parquet')
+  WHERE id = 'example-id'</code></pre>
+            <p>
+              We currently do not use the <i>Geo</i>Parquet capabilities, as fetching the geometry fields triggers almost a full file
+              download, possibly related to how the file was generated and/or the binary geometries are stored. It should merely showcase
+              how DuckDB can be leveraged to query parquet files; also not that DuckDB WASM is not a fully DuckDB compliant version as of
+              right now (see <a href="https://duckdb.org/docs/stable/clients/wasm/overview#limitations" target="_blank">limitiations</a>).
+              Furthermore, the typings are all over the place and due to timeconstraints, we could not dig deeper.
+            </p>
+            <p>
+              Another downside is that DuckDB itself is compiled as WASM binary that requires a 30MB download. However, once again, this
+              tool is incredibly promising and the current implementation already showcases a lot of its potential.
+            </p>
+            <p>
+              The DuckDB integration is quite picky when it comes to server configurations &mdash; the following
+              <code>.htaccess</code> can be used on Apache(-like) servers, especially in CORS settings.
+            </p>
+            <pre><code>&lt;IfModule mod_headers.c&gt;
+    Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin,X-Requested-With,Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified,Content-Range" Header set
+    Access-Control-Expose-Headers "Content-Range, Content-Length, ETag, Last-Modified"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS, HEAD"
+    &lt;FilesMatch "\.(tif|parquet|pmtiles|fgb)$"&gt;
+      Header set Cache-Control "public, max-age=3600"
+  &lt;/FilesMatch&gt;
+    Header set Connection "keep-alive"
+    Header set  Keep-Alive "timeout=5, max=100"
+&lt;/IfModule&gt;</code></pre>
+            <p>For local setup, you can use <a href="https://www.npmjs.com/package/http-server" target="_blank">http-server</a>:</p>
+            <pre><code class="language-bash">npx http-server -o ./ -g --cors=Accept-Ranges,Content-Length,ETag,Last-Modified,Content-Range</code></pre>
           </div>
         </div>
       </div>

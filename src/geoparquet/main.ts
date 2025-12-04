@@ -3,9 +3,11 @@ import duckdb_wasm from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url';
 import mvp_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url';
 import duckdb_wasm_next from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url';
 import eh_worker from '@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url';
-import {createMap, setupUI} from '../shared';
+import {createMap, getDataSource, setupUI} from '../shared';
 import {type GeoJSONSource} from 'maplibre-gl';
 import type {Feature} from 'geojson';
+
+const PARQUET_LOCATION = getDataSource('geoparquet');
 
 document.getElementById('rendercountry')!.addEventListener('input', async (e) => {
   const select = e.target as HTMLSelectElement;
@@ -73,7 +75,7 @@ const queryDuckDb = async (id: string) => {
   };
   const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
 
-  const worker = new Worker(bundle.mainWorker);
+  const worker = new Worker(bundle.mainWorker); // todo: handle gracefully :)
   const logger = new duckdb.ConsoleLogger();
   const db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
@@ -81,7 +83,7 @@ const queryDuckDb = async (id: string) => {
   const conn = await db.connect();
   const stmt = await conn.prepare(`
   SELECT id, country, names, bbox, region, subtype, class, type
-  FROM read_parquet('http://127.0.0.1:8080/divisions_2025-11-19.parquet')
+  FROM read_parquet('${PARQUET_LOCATION}')
   WHERE id = ?`);
   const result = await stmt.query(id);
 

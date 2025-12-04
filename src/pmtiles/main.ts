@@ -1,10 +1,10 @@
-import {createMap, setHighlightedResult, setupUI} from '../shared';
+import {createMap, getDataSource, setHighlightedResult, setupUI} from '../shared';
 import * as pmtiles from 'pmtiles';
 import maplibregl, {type MapGeoJSONFeature} from 'maplibre-gl';
 
 setupUI();
 
-const PMTILES_URL = '/data/divisions.pmtiles';
+const PMTILES_URL = getDataSource('pmtiles');
 const PMTILES_SOURCE_ID = 'pmtilesSource';
 const COUNTRY_LAYER_ID = 'countryLayer';
 const REGION_LAYER_ID = 'regionLayer';

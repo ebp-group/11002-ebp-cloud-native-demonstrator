@@ -1,11 +1,11 @@
-import {createMap, setHighlightedResult, setupUI} from '../shared';
+import {createMap, getDataSource, setHighlightedResult, setupUI} from '../shared';
 import {geojson} from 'flatgeobuf';
 import type {ExpressionSpecification, GeoJSONSource} from 'maplibre-gl';
 import type {FeatureCollection} from 'geojson';
 
 setupUI();
 
-const FGB_URL = '/data/solkat.fgb';
+const FGB_URL = getDataSource('flatgeobuf');
 const ROOF_SOURCE_ID = 'roofsSource';
 const RECTANGLE_SOURCE_ID = 'rectangleSource';
 const ROOFS_FILL_LAYER_ID = 'roofs-fill';

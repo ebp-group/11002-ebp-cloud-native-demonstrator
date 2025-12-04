@@ -1,10 +1,10 @@
-import {createMap, setHighlightedResult, setupUI} from '../shared';
+import {createMap, getDataSource, setHighlightedResult, setupUI} from '../shared';
 import maplibregl, {type AddLayerObject} from 'maplibre-gl';
 import {cogProtocol, locationValues} from '@geomatico/maplibre-cog-protocol';
 
 setupUI();
 
-const COGTIFF_URL = '/data/swissaltiregio_2056_5728_transformed_cog_norm.tif';
+const COGTIFF_URL = getDataSource('cogtiff');
 const RASTER_MIN_VALUE = 1.114; // obtained from gdalinfo before normalization
 const RASTER_MAX_VALUE = 4799.446; // obtained from gdalinfo before normalization
 const EXAGGERATION_FACTOR = 255 / RASTER_MAX_VALUE / 20; // hacky workaround to get proper elevation exaggeration

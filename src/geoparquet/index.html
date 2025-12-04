@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cloud-Native Geospatial Demonstrator</title>
-    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/geoparquet-VT62OcAF.js"></script>
+    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/geoparquet-B_zWd4eR.js"></script>
     <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-AK0TvtvL.js">
     <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-B7ka6WSd.js">
     <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-BCd0ybmK.css">
@@ -23,6 +23,9 @@
               <option disabled selected><b>Render BBOX for</b></option>
               <option value="508f8d1f-2491-437c-b857-f44ccc0446ad">Switzerland</option>
               <option value="d95d3f8a-a2f4-4436-b0e4-a3a86d15008e">Germany</option>
+              <option value="166e386a-2b15-45b0-9b23-fb0260657b7b">France</option>
+              <option value="2a0e60c1-1e67-4a09-84a3-603bd8124c5c">Austria</option>
+              <option value="678c68ad-ae0d-4aeb-aa7c-03c413b5d32c">Italy</option>
             </select>
           </div>
           <div class="overflow-auto">
@@ -43,8 +46,8 @@
             <hr />
             <h2 class="display-6">Things to note</h2>
             <div class="alert alert-warning">
-              <b>Important:</b>Versions <code>>=1.29.1-dev260.0</code>of <code>duckdb/duckdb-wasm</code> seem to have introduced a bug where
-              range requests are not used. Hence, this demonstrator uses a pinned version (<code>1.29.1-dev260.0</code>).
+              <b>Important:</b>Versions <code>>=2.29.1-dev217.0</code>of <code>duckdb/duckdb-wasm</code> seem to have introduced a bug where
+              range requests are not used. Hence, this demonstrator uses a pinned version (<code>1.29.1-dev167.0</code>).
             </div>
             <p>
               By selecting a country from the dropdown, its bounding box is fetched from the Parquet file and rendered on the map &mdash;
@@ -62,10 +65,15 @@
               download, possibly related to how the file was generated and/or the binary geometries are stored. It should merely showcase
               how DuckDB can be leveraged to query parquet files; also not that DuckDB WASM is not a fully DuckDB compliant version as of
               right now (see <a href="https://duckdb.org/docs/stable/clients/wasm/overview#limitations" target="_blank">limitiations</a>).
+              Furthermore, the typings are all over the place and due to timeconstraints, we could not dig deeper.
             </p>
             <p>
-              The DuckDB integration is quite picky when it comes to server configurations &mdash; the following <code>.htaccess</code> can
-              be used on Apache(-like) servers, especially in CORS settings.
+              Another downside is that DuckDB itself is compiled as WASM binary that requires a 30MB download. However, once again, this
+              tool is incredibly promising and the current implementation already showcases a lot of its potential.
+            </p>
+            <p>
+              The DuckDB integration is quite picky when it comes to server configurations &mdash; the following
+              <code>.htaccess</code> can be used on Apache(-like) servers, especially in CORS settings.
             </p>
             <pre><code>&lt;IfModule mod_headers.c&gt;
     Header set Access-Control-Allow-Origin "*" Header set Access-Control-Allow-Headers "Origin,X-Requested-With,Content-Type, Accept, Range, Accept-Ranges, Content-Length, ETag, Last-Modified,Content-Range" Header set

@@ -36,3 +36,12 @@ body {
 .overflow-auto {
   flex-grow: 1;
 }
+
+#github {
+  height: 25px;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 1;
+  }
+}

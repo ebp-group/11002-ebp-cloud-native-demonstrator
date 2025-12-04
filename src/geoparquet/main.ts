@@ -50,6 +50,7 @@ map.on('load', async () => {
   map.addSource(DUCKDB_SOURCE_ID, {
     type: 'geojson',
     data: {type: 'FeatureCollection', features: []},
+    attribution: '©OpenStreetMap contributors, Overture Maps Foundation.',
   });
 
   map.addLayer({

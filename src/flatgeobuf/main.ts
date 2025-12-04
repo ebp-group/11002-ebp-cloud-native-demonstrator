@@ -75,6 +75,7 @@ map.on('load', async () => {
   map.addSource(ROOF_SOURCE_ID, {
     type: 'geojson',
     data: {type: 'FeatureCollection', features: []},
+    attribution: '©Bundesamt für Energie BFE',
   });
   map.addLayer({
     id: ROOFS_FILL_LAYER_ID,

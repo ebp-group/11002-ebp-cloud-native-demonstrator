@@ -7,7 +7,7 @@ const GITHUB_PAGES_BASE = '/11002-ebp-cloud-native-demonstrator/';
 export default defineConfig({
   root: './',
   define: {
-    __GITHUB_PAGES_BASE__: GITHUB_PAGES_BASE,
+    __GITHUB_PAGES_BASE__: JSON.stringify(GITHUB_PAGES_BASE),
   },
   base: GITHUB_PAGES_BASE,
   plugins: [wasm()],

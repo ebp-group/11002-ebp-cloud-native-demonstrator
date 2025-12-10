@@ -12,8 +12,8 @@ const DATA_SOURCES: DataSourceConfig = {
     production: 'https://digital.ebp.ch/cloud-native-demonstrator/divisions.pmtiles',
   },
   cogtiff: {
-    development: __GITHUB_PAGES_BASE__ + 'data/swissaltiregio_2056_5728_transformed_cog_norm.tif',
-    production: 'https://digital.ebp.ch/cloud-native-demonstrator/swissaltiregio_2056_5728_transformed_cog_norm.tif',
+    development: __GITHUB_PAGES_BASE__ + 'data/output_rgb_cog.tif',
+    production: 'https://digital.ebp.ch/cloud-native-demonstrator/output_rgb_cog.tif',
   },
   flatgeobuf: {
     development: __GITHUB_PAGES_BASE__ + 'data/solkat.fgb',

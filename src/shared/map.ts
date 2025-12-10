@@ -5,6 +5,8 @@ type MapOptions = {
   maxZoom?: number;
   minZoom?: number;
   initialZoom?: number;
+  initialPitch?: number;
+  initialBearing?: number;
   initialPosition?: {
     lat: number;
     lon: number;
@@ -22,5 +24,7 @@ export const createMap = (options: MapOptions = {}): maplibregl.Map => {
     zoom: options.initialZoom ?? 9,
     maxZoom: options.maxZoom,
     minZoom: options.minZoom,
+    pitch: options.initialPitch ?? 0,
+    bearing: options.initialBearing ?? 0,
   });
 };

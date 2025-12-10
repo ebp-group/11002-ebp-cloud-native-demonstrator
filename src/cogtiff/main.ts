@@ -25,20 +25,22 @@ const HILLSHADE_LAYER: AddLayerObject = {
 const TERRAIN_SOURCE_ID = 'cogSourceTerrain';
 
 maplibregl.addProtocol('cog', cogProtocol);
-const map = createMap();
+const map = createMap({initialPitch: 60, initialZoom: 10, initialBearing: 145, initialPosition: {lat: 46.61443, lon: 7.94621}});
 
 map.on('load', () => {
   map.addSource(COG_SOURCE_ID, {
     type: 'raster',
     url: `cog://${COGTIFF_URL}`,
     tileSize: 256,
-    attribution:
-      '©Bundesamt für Landestopografie swisstopo; Tarquini S., I. Isola, M. Favalli, A. Battistini, G. Dotta (2023). TINITALY, a digital elevation model of Italy with a 10 meters cell size (Version 1.1). Istituto Nazionale di Geofisica e Vulcanologia (INGV). https://doi.org/10.13127/tinitaly/1.1; DGM Österreich, geoland.at; DGM1, Bayerische Vermessungsverwaltung – www.geodaten.bayern.de; DGM 1 Baden-Württemberg: LGL, www.lgl-bw.de, dl-de/by-2-0”; RGEAlti, Institut National de l’information géographique et forestière, données originales tétéchargées sur https://geoservices.ign.fr/rgealti#telechargement5m, mise à jour du juillet 2023',
   });
   map.addSource(TERRAIN_SOURCE_ID, {
     type: 'raster-dem',
     url: `cog://${COGTIFF_URL}`,
     tileSize: 256,
+    attribution:
+      '©Bundesamt für Landestopografie swisstopo; Tarquini S., I. Isola, M. Favalli, A. Battistini, G.' +
+      ' Dotta (2023).' +
+      ' TINITALY, a digital elevation model of Italy with a 10 meters cell size (Version 1.1). Istituto Nazionale di Geofisica e Vulcanologia (INGV). https://doi.org/10.13127/tinitaly/1.1; DGM Österreich, geoland.at; DGM1, Bayerische Vermessungsverwaltung – www.geodaten.bayern.de; DGM 1 Baden-Württemberg: LGL, www.lgl-bw.de, dl-de/by-2-0”; RGEAlti, Institut National de l’information géographique et forestière, données originales tétéchargées sur https://geoservices.ign.fr/rgealti#telechargement5m, mise à jour du juillet 2023',
   });
   map.addSource(HILLSHADE_SOURCE_ID, {
     type: 'raster-dem',
@@ -46,23 +48,8 @@ map.on('load', () => {
     tileSize: 256,
   });
 
-  map.addLayer(COG_LAYER);
-
-  map.addControl(
-    new maplibregl.TerrainControl({
-      source: TERRAIN_SOURCE_ID,
-    }),
-  );
-
-  map.on('terrain', () => {
-    if (map.getTerrain()) {
-      map.removeLayer(COG_LAYER.id);
-      map.addLayer(HILLSHADE_LAYER);
-    } else {
-      map.removeLayer(HILLSHADE_LAYER.id);
-      map.addLayer(COG_LAYER);
-    }
-  });
+  map.addLayer(HILLSHADE_LAYER);
+  map.setTerrain({source: TERRAIN_SOURCE_ID});
 });
 
 map.on('click', ({lngLat}) => {
@@ -74,3 +61,11 @@ map.on('click', ({lngLat}) => {
 const getElevationFromMapboxEncodedTerrain = (r: number, g: number, b: number) => {
   return (r * 256 * 256 + g * 256 + b) * 0.1 - 10000;
 };
+
+document.getElementById('toggleRaster')!.addEventListener('click', () => {
+  if (map.getLayer(COG_LAYER.id)) {
+    map.removeLayer(COG_LAYER.id);
+  } else {
+    map.addLayer(COG_LAYER);
+  }
+});

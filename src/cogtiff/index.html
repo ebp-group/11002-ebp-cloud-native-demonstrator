@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height" />
     <title>Cloud-Native Geospatial Demonstrator</title>
-    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/cogtiff-xIEnWy4r.js"></script>
+    <script type="module" crossorigin src="/11002-ebp-cloud-native-demonstrator/assets/cogtiff-BWyqXT1X.js"></script>
     <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-eToNCYVM.js">
-    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-Dl1M6fnP.js">
+    <link rel="modulepreload" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/data-Cxv9Brqb.js">
     <link rel="stylesheet" crossorigin href="/11002-ebp-cloud-native-demonstrator/assets/index-Ynnb0EWS.css">
   </head>
   <body>
@@ -42,7 +42,7 @@
                   @geomatico/maplibre-cog-protocol
                 </a>
               </li>
-              <li>Datafile is roughly 430MB, see network tab to see the rangerequests in action.</li>
+              <li>Datafile is roughly 4GB, see network tab to see the rangerequests in action.</li>
             </ul>
 
             <hr />
@@ -53,26 +53,44 @@
               <code>EPSG:3857</code>
               and on-the-fly reprojections is not natively available in the protocol handler, we need to reproject the data beforehand.
             </p>
-            <p>Reprojecting the data can be done using <a href="https://gdal.org/en/stable/" target="_blank">GDAL</a>.</p>
-            <pre><code class="language-bash"># Reproject from EPSG:2056 to EPSG:3857; note the compression to create a COG; allow BIGTIFF if needed
-gdalwarp -s_srs EPSG:2056 -t_srs EPSG:3857 input.tif output_3857.tif -of COG -co COMPRESS=LZW -co BIGTIFF=YES
-
-# Optionally, normalize values to 0-255 range for direct visualisation without custom visualizer functions
-gdal_translate -ot Byte -of COG -co COMPRESS=LZW -co BIGTIFF=YES  -scale -a_nodata 0 input.tif output.tif</code></pre>
             <p>
-              Custom color schemes are also possible; however, the library at this point in time did have typing errors and the coloring
-              function was not exposed. As with all dynamic coloring, performance will be lower than pre-styled tiles as the function is
-              applied <i>per pixel</i>, hence, computational complexity of the coloring function directly scales with pixel resolution.
+              Reprojecting the data can be done using <a href="https://gdal.org/en/stable/" target="_blank"><code>GDAL</code></a
+              >.
+            </p>
+            <pre><code class="language-bash"># Reproject from EPSG:2056 to EPSG:3857; note the compression to create a COG; allow BIGTIFF if needed
+gdalwarp -s_srs EPSG:2056 -t_srs EPSG:3857 input.tif output_3857.tif -of COG -co COMPRESS=LZW -co BIGTIFF=YES</code></pre>
+            <p>
+              Because we're also showcasing maplibre's
+              <a href="https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/" target="_blank">3D Terrain</a>, we need to encode our
+              raster in mapbox's
+              <a href="https://docs.mapbox.com/data/tilesets/reference/mapbox-terrain-dem-v1/" target="_blank">terrain encoded format</a>.
+              As mentioned in our
+              <a href="https://digital.ebp.ch/2023/10/09/cloudnative-geospatial-diy-hoehenlinien-aus-der-cloud-teil-2/" target="_blank"
+                >blog series about DIY contours</a
+              >, this can be easily done using <a href="https://rasterio.readthedocs.io/en/stable/" target="_blank"><code>rasterio</code></a
+              >. The following steps are required:
+            </p>
+            <pre><code class="language-bash"># set nodata values to 0, since the source dataset has unsupported nodata values
+gdalwarp output_3857.tif output_3857_nodata.tif -dstnodata 0 -of COG -co COMPRESS=LZW -co BIGTIFF=YES
+
+# create terrain encoded raster
+uv run rio rgbify -b -10000 -i 0.1 output_3857_nodata.tif output_rgb.tif
+
+# create a cogtiff from the terrain encoded raster
+uv run rio cogeo create output_rgb.tif output_rgb_cog_rio.tif</code></pre>
+            <p>
+              There are plenty of ways to install <code>rasterio</code>, but in the above, we simply created a new python project using
+              <a href="https://docs.astral.sh/uv/" target="_blank"><code>uv</code></a> and added the required dependencies. Doing so allows
+              us to run <code>rasterio</code> commands as simple python modules. The last step is very important, because if we create the
+              COGTIFF from the RGB encoded terrain directly using <code>gdal_translate</code>, we'll get artifacts on the more generalized
+              tiles, because the rounding between the raster values is not a simple interpolation.
+              <a href="https://github.com/cogeotiff/rio-cogeo" target="_blank"><code>rasterio-cogeo</code></a> takes care of this.
             </p>
             <p>
-              Using COGTIFFs works well with maplibre's
-              <a href="https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/" target="_blank">3D Terrain</a> capabilities. If you
-              toggle the terrain using the button on the upper right, the same COGTIFF is used for rendering the 3d elevation and adding
-              hillshade (if you haven't, use <code>CTRL + Click</code> to pitch the map). <b>However,</b> since we normalized the raster for
-              simpler visualisation, the example uses an exaggeration hack to get back to the original values, since maplibre interprets
-              raster values in meters. Furthermore, due to the resolution of the dataset, the terrain does not look very smooth &mdash; it
-              is a mere example of showing the capabilities of using COGTIFFs. Finally, due to the implementation of both the protocol
-              handler, the elevation query still works (even though <i>technically</i> we could use the terrain querying mechanism).
+              Last but not least, we <i>could</i> use the elevation query on the terrain layer directly, but because we're using a COGTIFF,
+              there are instances where a given Pixel does not have the correct elevation information or has not yet been loaded. Therefore,
+              we directly query the raster at the given pixel value and decode the RGB-encoded information into the original elevation
+              value.
             </p>
           </div>
         </div>
